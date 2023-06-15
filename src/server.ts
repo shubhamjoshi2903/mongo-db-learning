@@ -3,6 +3,8 @@ import http from 'http';
 import mongoose from 'mongoose';
 import { config } from './config/config';
 import Logging from './library/logging';
+import authorRoutes from './routes/author';
+import bookRoutes from './routes/Book';
 
 const router = express();
 
@@ -41,7 +43,8 @@ const startServer = () => {
     });
 
     // Routes
-
+    router.use('/author', authorRoutes);
+    router.use('/book', bookRoutes);
     // healthCheck
     router.get('/ping', (req, res, next) => {
         res.status(200).json({
@@ -50,7 +53,6 @@ const startServer = () => {
     });
 
     //Error Handling
-
     router.use((req, res, next) => {
         const error = new Error('Not Found');
         Logging.error(error);
