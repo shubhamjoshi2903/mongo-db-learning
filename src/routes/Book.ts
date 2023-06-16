@@ -8,6 +8,8 @@ router.get('/book/:bookId', controller.readBook);
 router.get('/all-books', controller.readAllBook);
 router.put('/update/:bookId', validateSchema, controller.updateBook);
 router.delete('/delete-book/:bookId', controller.deleteBook);
-router.post('/create-book', validateSchema(Schema.author.create), controller.createBook);
+router.post('/create-book', controller.createBook);
 
 export = router;
+
+// validateSchema(Schema.author.create);

@@ -9,7 +9,6 @@ const createBook = (req: Request, res: Response, next: NextFunction) => {
         title,
         author
     });
-    console.log('book', book);
     return book
         .save()
         .then((book) => res.status(201).json({ book }))

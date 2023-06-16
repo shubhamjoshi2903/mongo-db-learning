@@ -1,12 +1,15 @@
 import { NextFunction, Request, response, Response } from 'express';
 import mongoose from 'mongoose';
+import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
 import Author from '../models/Authors';
+import Books from '../models/Books';
 
 const createAuthor = (req: Request, res: Response, next: NextFunction) => {
-    const { name } = req.body;
+    const { name, book } = req.body;
     const author = new Author({
         _id: new mongoose.Types.ObjectId(),
-        name
+        name,
+        book
     });
     return author
         .save()
@@ -19,9 +22,20 @@ const readAuthor = (req: Request, res: Response, next: NextFunction) => {
         .then((author) => (author ? res.status(200).json({ author }) : res.status(400).json({ error: 'user not found' })))
         .catch((err) => res.status(500).json({ error: err }));
 };
-const readAllAuthor = (req: Request, res: Response, next: NextFunction) => {
-    return Author.find()
-        .then((authors) => res.status(200).json({ authors }))
+const readAllAuthor = async (req: Request, res: Response, next: NextFunction) => {
+    return await Author.aggregate([
+        {
+            $lookup: {
+                from: 'books',
+                localField: '_id',
+                foreignField: 'author',
+                as: 'books'
+            }
+        }
+    ])
+        .then((authors) => {
+            return res.status(200).json({ authors });
+        })
         .catch((err) => res.status(500).json({ error: err }));
 };
 const updateAuthor = (req: Request, res: Response, next: NextFunction) => {
