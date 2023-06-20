@@ -1,15 +1,16 @@
 import { NextFunction, Request, response, Response } from 'express';
 import mongoose from 'mongoose';
-import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
 import Author from '../models/Authors';
 import Books from '../models/Books';
 
 const createAuthor = (req: Request, res: Response, next: NextFunction) => {
-    const { name, book } = req.body;
+    const { name, book, email, password } = req.body;
     const author = new Author({
         _id: new mongoose.Types.ObjectId(),
         name,
-        book
+        book,
+        email,
+        password
     });
     return author
         .save()
@@ -29,6 +30,7 @@ const readAllAuthor = async (req: Request, res: Response, next: NextFunction) =>
                 from: 'books',
                 localField: '_id',
                 foreignField: 'author',
+                pipeline: [{ $lookup: { from: 'categories', localField: '_id', foreignField: 'book', as: 'category' } }],
                 as: 'books'
             }
         }
@@ -56,6 +58,8 @@ const updateAuthor = (req: Request, res: Response, next: NextFunction) => {
 };
 const deleteAuthor = (req: Request, res: Response, next: NextFunction) => {
     const authorId = req.params.authorId;
+    const books = Books.deleteMany({ author: authorId });
+    console.log('books', books);
     return Author.findByIdAndDelete(authorId)
         .then((author) => (author ? res.status(201).json({ message: 'Author deleted' }) : res.status(400).json({ error: 'Author not found' })))
         .catch((err) => res.status(500).json({ error: err }));
