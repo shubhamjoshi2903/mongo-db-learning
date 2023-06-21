@@ -14,6 +14,7 @@ const MONGO_PASSWORD = process.env.MONGO_PASSWORD || '';
 
 const MONGO_URL = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@cluster0.cfnmian.mongodb.net/?retryWrites=true&w=majority`;
 const SERVER_PORT = process.env.SERVER_PORT ? Number(process.env.SERVER_PORT) : 3000;
+const SECRETKEY = process.env.SECRETKEY;
 
 export const config = {
     mongo: {
@@ -21,5 +22,8 @@ export const config = {
     },
     server: {
         port: SERVER_PORT
+    },
+    secretKey: {
+        key: SECRETKEY
     }
 };
