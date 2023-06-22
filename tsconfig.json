@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "types": ["node", "lodash", "express"],
         "target": "es2016",
         "module": "commonjs",
         "outDir": "./build",
@@ -8,5 +9,6 @@
         "strict": true,
         "skipLibCheck": true
     },
+
     "include": ["src/**/*"]
 }

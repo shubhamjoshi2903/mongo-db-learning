@@ -6,8 +6,12 @@ import Logging from './library/logging';
 import authorRoutes from './routes/Author';
 import bookRoutes from './routes/Book';
 import categoryRoutes from './routes/Category';
+import cors from 'cors';
+import bodyParser from 'body-parser';
 
 const router = express();
+
+router.use(cors());
 
 /*Connect to mongo */
 mongoose
@@ -31,8 +35,9 @@ const startServer = () => {
         });
         next();
     });
+
+    router.use(bodyParser.json());
     router.use(express.urlencoded({ extended: true }));
-    router.use(express.json());
 
     router.use((req, res, next) => {
         res.header('Access-Control-Allow-Origin', '*');

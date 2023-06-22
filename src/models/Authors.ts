@@ -13,7 +13,11 @@ const AuthorSchema: Schema = new Schema(
     {
         name: { type: String, required: true },
         email: { type: String, required: true, unique: true },
-        password: { type: String, required: true }
+        password: { type: String, required: true },
+        profileImage: {
+            data: Buffer,
+            contentType: String
+        }
     },
     {
         versionKey: false

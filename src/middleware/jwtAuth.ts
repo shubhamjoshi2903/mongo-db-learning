@@ -13,7 +13,6 @@ const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
         if (typeof token !== 'undefined') {
             const bearer = token.split(' ');
             const bearerToken = bearer[1];
-            console.log('bearerToken', bearerToken);
 
             const decoded = jwt.verify(bearerToken, process.env.SECRETKEY as Secret);
             if (decoded) {

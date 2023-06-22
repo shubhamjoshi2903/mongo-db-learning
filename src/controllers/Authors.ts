@@ -8,10 +8,10 @@ import jwt, { Secret } from 'jsonwebtoken';
 import { config } from '../config/config';
 dotenv.config();
 const createAuthor = async (req: Request, res: Response, next: NextFunction) => {
-    const { name, email, password } = req.body;
-
+    const { name, email, password, profileImage } = req.body;
+    console.log('req.body', req.body);
     if (!(email && password && name)) {
-        res.status(400).send('All input is required');
+        return res.status(400).send('All input is required');
     }
     const oldUser = await Author.findOne({ email });
 
@@ -81,8 +81,12 @@ const readAllAuthor = async (req: Request, res: Response, next: NextFunction) =>
             }
         }
     ])
-        .then((authors) => {
-            return res.status(200).json({ authors });
+        .then((authors: any) => {
+            const filteredAuhtors = authors.map((author: any) => {
+                return { id: author._id, name: author.name, email: author.email, books: author.books };
+            });
+
+            return res.status(200).json(filteredAuhtors);
         })
         .catch((err) => res.status(500).json({ error: err }));
 };
