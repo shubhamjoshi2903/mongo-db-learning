@@ -1,4 +1,4 @@
-import { NextFunction, Request, response, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Author from '../models/Authors';
 import dotenv from 'dotenv';
@@ -8,8 +8,10 @@ import jwt, { Secret } from 'jsonwebtoken';
 import { config } from '../config/config';
 dotenv.config();
 const createAuthor = async (req: Request, res: Response, next: NextFunction) => {
-    const { name, email, password, profileImage } = req.body;
+    console.log('req.file', req.files);
     console.log('req.body', req.body);
+    const { name, email, password } = req.body;
+
     if (!(email && password && name)) {
         return res.status(400).send('All input is required');
     }
