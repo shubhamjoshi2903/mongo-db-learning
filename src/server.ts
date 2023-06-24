@@ -15,7 +15,7 @@ mongoose
         Logging.info('Connected to mongodb');
         startServer();
     })
-    .catch((err) => {
+    .catch((err: any) => {
         Logging.error('Unable to connect to the Database: ');
         Logging.error(err);
     });
