@@ -22,9 +22,12 @@ const readBook = (req: Request, res: Response, next: NextFunction) => {
 };
 const readAllBook = (req: Request, res: Response, next: NextFunction) => {
     return Book.find()
-        .populate('author')
+        .populate('author', '_id name  email')
         .select('-__v')
-        .then((books) => res.status(200).json({ books }))
+        .then((books) => {
+            console.log('books', books);
+            return res.status(200).json({ books });
+        })
         .catch((err) => res.status(500).json({ error: err }));
 };
 const updateBook = (req: Request, res: Response, next: NextFunction) => {

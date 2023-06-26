@@ -1,12 +1,17 @@
 import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
 import http from 'http';
 import mongoose from 'mongoose';
 import { config } from './config/config';
 import Logging from './library/logging';
 import authorRoutes from './routes/Author';
 import bookRoutes from './routes/Book';
+import categoryRoutes from './routes/Category';
 
 const router = express();
+
+router.use(cors());
 
 /*Connect to mongo */
 mongoose
@@ -20,6 +25,13 @@ mongoose
         Logging.error(err);
     });
 
+router.use(bodyParser.json());
+router.use(
+    bodyParser.urlencoded({
+        extended: true
+    })
+);
+router.use(express.static('src/assets/uploads'));
 // Only start the server if it MongoDB Connect
 const startServer = () => {
     router.use((req, res, next) => {
@@ -30,8 +42,6 @@ const startServer = () => {
         });
         next();
     });
-    router.use(express.urlencoded({ extended: true }));
-    router.use(express.json());
 
     router.use((req, res, next) => {
         res.header('Access-Control-Allow-Origin', '*');
@@ -45,6 +55,7 @@ const startServer = () => {
     // Routes
     router.use('/author', authorRoutes);
     router.use('/book', bookRoutes);
+    router.use('/category', categoryRoutes);
     // healthCheck
     router.get('/ping', (req, res, next) => {
         res.status(200).json({
