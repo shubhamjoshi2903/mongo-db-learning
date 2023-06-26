@@ -9,13 +9,15 @@ import fs from 'fs';
 import { promisify } from 'util';
 const unlinkAsync = promisify(fs.unlink);
 import { config } from '../config/config';
+import uploadImageAws from '../utils/aws';
 dotenv.config();
 
 const createAuthor = async (req: Request, res: Response, next: NextFunction) => {
+    // const file = req.file?.buffer();
+    console.log('req.files', req);
     const profile = req.files as Express.Multer.File[];
     const myFirstfile = profile[0];
-    console.log('myFirstfile', myFirstfile);
-
+    // await uploadImageAws(file, profile);
     const { name, email, password } = req.body;
 
     if (!(email && password && name)) {
@@ -35,6 +37,7 @@ const createAuthor = async (req: Request, res: Response, next: NextFunction) => 
         password: encryptedPassword,
         profileImage: `http://localhost:8080/${myFirstfile.filename}`
     });
+
     return author
         .save()
         .then((author) => res.status(201).json({ author }))
