@@ -7,9 +7,10 @@ import { NextFunction, Request, Response } from 'express';
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'src/assets/uploads');
+        cb(null, './src/assets/uploads');
     },
     filename: function (req, file, cb) {
+        console.log('first', file);
         cb(null, Date.now() + path.extname(file.originalname));
     }
 });

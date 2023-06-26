@@ -5,11 +5,17 @@ import dotenv from 'dotenv';
 import Books from '../models/Books';
 import bcrypt from 'bcryptjs';
 import jwt, { Secret } from 'jsonwebtoken';
+import fs from 'fs';
+import { promisify } from 'util';
+const unlinkAsync = promisify(fs.unlink);
 import { config } from '../config/config';
 dotenv.config();
+
 const createAuthor = async (req: Request, res: Response, next: NextFunction) => {
-    console.log('req.file', req.files);
-    console.log('req.body', req.body);
+    const profile = req.files as Express.Multer.File[];
+    const myFirstfile = profile[0];
+    console.log('myFirstfile', myFirstfile);
+
     const { name, email, password } = req.body;
 
     if (!(email && password && name)) {
@@ -18,15 +24,16 @@ const createAuthor = async (req: Request, res: Response, next: NextFunction) => 
     const oldUser = await Author.findOne({ email });
 
     if (oldUser) {
+        await unlinkAsync(myFirstfile.path);
         return res.status(409).json({ status: 409, message: 'User Already Exist.' });
     }
-    // const salt = bcrypt.genSalt(10);
     const encryptedPassword = bcrypt.hashSync(password, 10);
     const author = new Author({
         _id: new mongoose.Types.ObjectId(),
         name,
         email,
-        password: encryptedPassword
+        password: encryptedPassword,
+        profileImage: `http://localhost:8080/${myFirstfile.filename}`
     });
     return author
         .save()
@@ -85,7 +92,7 @@ const readAllAuthor = async (req: Request, res: Response, next: NextFunction) =>
     ])
         .then((authors: any) => {
             const filteredAuhtors = authors.map((author: any) => {
-                return { id: author._id, name: author.name, email: author.email, books: author.books };
+                return { id: author._id, name: author.name, email: author.email, books: author.books, profileImage: author.profileImage };
             });
 
             return res.status(200).json(filteredAuhtors);
