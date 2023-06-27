@@ -6,7 +6,7 @@ import { upload } from '../middleware/upload';
 const router = express.Router();
 
 router.get('/author/:authorId', verifyToken, controller.readAuthor);
-router.post('/author/login', controller.loginAuthor);
+router.post('/login', controller.loginAuthor);
 router.get('/all-authors', verifyToken, controller.readAllAuthor);
 router.put('/update/:authorId', verifyToken, controller.updateAuthor);
 router.delete('/delete-author/:authorId', verifyToken, controller.deleteAuthor);

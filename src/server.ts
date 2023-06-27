@@ -31,7 +31,9 @@ router.use(
         extended: true
     })
 );
+
 router.use(express.static('src/assets/uploads'));
+
 // Only start the server if it MongoDB Connect
 const startServer = () => {
     router.use((req, res, next) => {
