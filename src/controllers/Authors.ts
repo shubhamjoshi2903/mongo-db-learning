@@ -7,19 +7,21 @@ import bcrypt from 'bcryptjs';
 import jwt, { Secret } from 'jsonwebtoken';
 import fs from 'fs';
 import { promisify } from 'util';
-const unlinkAsync = promisify(fs.unlink);
+
 import { config } from '../config/config';
 import uploadImageAws from '../utils/aws';
+import viewImageAws from '../utils/aws/viewFile';
 dotenv.config();
-
+const unlinkAsync = promisify(fs.unlink);
 const createAuthor = async (req: Request, res: Response, next: NextFunction) => {
     // const file = req?.files?.buffer() as Express.Multer.file;
-    console.log('req.file', req.file);
+    // console.log('req.file', req?.file?.buffer);
+    const bufferData = req?.file?.buffer;
     const profile = req.files as Express.Multer.File[];
     console.log('profile', profile);
 
     const fileName = profile[0];
-    const url = await uploadImageAws(profile[0].path);
+    const url = await uploadImageAws(profile[0]?.buffer);
     console.log('url', url);
     const { name, email, password } = req.body;
 
@@ -27,9 +29,9 @@ const createAuthor = async (req: Request, res: Response, next: NextFunction) => 
         return res.status(400).send('All input is required');
     }
     const oldUser = await Author.findOne({ email });
-
+    const viewImage = await viewImageAws(url);
+    console.log('viewImage', viewImage);
     if (oldUser) {
-        await unlinkAsync(fileName.path);
         return res.status(409).json({ status: 409, message: 'User Already Exist.' });
     }
     const encryptedPassword = bcrypt.hashSync(password, 10);

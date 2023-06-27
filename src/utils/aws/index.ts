@@ -1,6 +1,7 @@
 import aws from 'aws-sdk';
 
-const uploadImageAws = async (file: string) => {
+const uploadImageAws = async (file?: Buffer) => {
+    console.log('file', file);
     const s3 = new aws.S3({
         accessKeyId: process.env.AWS_ACCESS_KEY,
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
