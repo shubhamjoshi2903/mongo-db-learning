@@ -20,17 +20,17 @@ const createAuthor = async (req: Request, res: Response, next: NextFunction) => 
     const profile = req.files as Express.Multer.File[];
     console.log('profile', profile);
 
-    const fileName = profile[0];
-    const url = await uploadImageAws(profile[0]?.buffer);
-    console.log('url', url);
+    // const fileName = profile[0];
+    // const url = await uploadImageAws(profile[0]?.buffer);
+    // console.log('url', url);
     const { name, email, password } = req.body;
 
     if (!(email && password && name)) {
         return res.status(400).send('All input is required');
     }
     const oldUser = await Author.findOne({ email });
-    const viewImage = await viewImageAws(url);
-    console.log('viewImage', viewImage);
+    // const viewImage = await viewImageAws(url);
+    // console.log('viewImage', viewImage);
     if (oldUser) {
         return res.status(409).json({ status: 409, message: 'User Already Exist.' });
     }
@@ -39,8 +39,8 @@ const createAuthor = async (req: Request, res: Response, next: NextFunction) => 
         _id: new mongoose.Types.ObjectId(),
         name,
         email,
-        password: encryptedPassword,
-        profileImage: url
+        password: encryptedPassword
+        // profileImage: url
     });
 
     return author
