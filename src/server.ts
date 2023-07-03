@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Express } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import http from 'http';
@@ -8,11 +8,19 @@ import Logging from './library/logging';
 import authorRoutes from './routes/Author';
 import bookRoutes from './routes/Book';
 import categoryRoutes from './routes/Category';
+import { Server, Socket } from 'socket.io';
+import socketHandler from './sockets';
+import * as tls from 'tls';
 
-const router = express();
+const router: Express = express();
+
+const app: http.Server = http.createServer(router);
+
+const io: Server<Socket> = new Server(app);
 
 router.use(cors());
-
+// Add middleware using io.use
+// console.log(tls.getSupportedProtocols());
 /*Connect to mongo */
 mongoose
     .connect(config.mongo.url, { retryWrites: true, w: 'majority' })
@@ -45,14 +53,14 @@ const startServer = () => {
         next();
     });
 
-    router.use((req, res, next) => {
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Access-Control-Allow-Header', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-        if (req.method == 'OPTION') {
-            res.header('Access-control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
-        }
-        next();
-    });
+    // router.use((req, res, next) => {
+    //     res.header('Access-Control-Allow-Origin', '*');
+    //     res.header('Access-Control-Allow-Header', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    //     if (req.method == 'OPTION') {
+    //         res.header('Access-control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
+    //     }
+    //     next();
+    // });
 
     // Routes
     router.use('/author', authorRoutes);
@@ -64,6 +72,7 @@ const startServer = () => {
             message: 'Server is Working Fine'
         });
     });
+    socketHandler(io);
 
     //Error Handling
     router.use((req, res, next) => {
@@ -71,7 +80,7 @@ const startServer = () => {
         Logging.error(error);
         return res.status(404).json({ message: error.message });
     });
-    http.createServer(router).listen(config.server.port, () => {
+    app.listen(config.server.port, () => {
         Logging.info(`Server is running on port ${config.server.port}`);
     });
 };

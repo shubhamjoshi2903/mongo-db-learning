@@ -80,7 +80,7 @@ const loginAuthor = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-const readAuthor = (req: Request, res: Response, next: NextFunction) => {
+const readAuthor = async (req: Request, res: Response, next: NextFunction) => {
     const authorId = req.params.authorId;
     return Author.findById(authorId)
         .then((author) => (author ? res.status(200).json({ author }) : res.status(400).json({ error: 'user not found' })))
@@ -100,7 +100,7 @@ const readAllAuthor = async (req: Request, res: Response, next: NextFunction) =>
     ])
         .then((authors: any) => {
             const filteredAuhtors = authors.map((author: any) => {
-                return { id: author._id, name: author.name, email: author.email, books: author.books, profileImage: author.profileImage };
+                return { _id: author._id, name: author.name, email: author.email, books: author.books, profileImage: author.profileImage };
             });
 
             return res.status(200).json(filteredAuhtors);
