@@ -63,10 +63,11 @@ const loginAuthor = async (req: Request, res: Response, next: NextFunction) => {
 
         if (user && (await bcrypt.compare(password, user.password))) {
             const token = jwt.sign({ user_id: user._id, email }, process.env.SECRETKEY as Secret, {
-                expiresIn: 86400 // expires in 24 hours
+                expiresIn: 86400
             });
             user.token = token;
             const userDetail = {
+                id: user.id,
                 name: user.name,
                 email: user.email,
                 token: user.token
